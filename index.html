@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fórmula 1: Clasificación y Puntuación</title>
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #cce7ff; /* Fondo celeste */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #333;
+            padding: 20px;
+            margin: 0;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: #333;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 20px;
+        }
+
+        /* Cartel de crédito */
+        .powered-by {
+            font-size: 16px;
+            font-weight: bold;
+            color: #ff4d4d;
+            text-align: center;
+            animation: blinkingText 1s infinite;
+            background-color: #ffcccc;
+            padding: 8px 15px;
+            border-radius: 12px;
+            box-shadow: 8px 8px 16px #a1bddb, -8px -8px 16px #ffffff;
+            margin: 20px 0;
+        }
+
+        @keyframes blinkingText {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+        /* Estilo neumorfismo para botones */
+        button {
+            background: #cce7ff;
+            border: none;
+            border-radius: 12px;
+            padding: 10px 20px;
+            margin: 10px 0;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            cursor: pointer;
+            box-shadow: 6px 6px 12px #a1bddb, -6px -6px 12px #ffffff;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            width: 80%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        button:active {
+            transform: scale(0.95);
+            box-shadow: 4px 4px 8px #a1bddb, -4px -4px 8px #ffffff;
+        }
+
+        /* Icono en los botones */
+        .icon {
+            font-size: 20px;
+            color: #333;
+        }
+
+        /* Vista de pantalla completa */
+        .fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #cce7ff; /* Fondo celeste */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            padding: 30px;
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+        }
+
+        .fullscreen p, .fullscreen ul {
+            font-size: 18px;
+            line-height: 1.6;
+            text-align: left;
+            padding-left: 15px;
+            margin-bottom: 20px;
+            max-width: 90%;
+        }
+
+        /* Animación y estilo de las ruedas */
+        .wheel {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 4px solid transparent;
+            animation: spin 2s linear infinite;
+            margin-right: 10px;
+            box-shadow: 2px 2px 4px #a1bddb, -2px -2px 4px #ffffff;
+        }
+
+        .wheel.blando { border-color: red; }
+        .wheel.medio { border-color: yellow; }
+        .wheel.duro { border-color: #555555; } /* Gris oscuro para mejor visibilidad */
+        .wheel.intermedio { border-color: green; }
+        .wheel.wet { border-color: blue; }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Botón de regresar en la vista de pantalla completa */
+        .back-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease;
+        }
+
+        .back-button:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body>
+    <h1>Fórmula 1: Clasificación y Puntuación</h1>
+
+    <button onclick="mostrarPantallaCompleta('clasificacion')" class="button">
+        <span class="icon">🏎️</span> Formato de Clasificación
+    </button>
+
+    <button onclick="mostrarPantallaCompleta('carreraNormal')" class="button">
+        <span class="icon">🚥</span> Formato de Carrera Normal
+    </button>
+
+    <button onclick="mostrarPantallaCompleta('carreraSprint')" class="button">
+        <span class="icon">⚡</span> Formato de Carrera Sprint
+    </button>
+
+    <button onclick="mostrarPantallaCompleta('puntajeNormal')" class="button">
+        <span class="icon">🏆</span> Puntaje Carrera Normal
+    </button>
+
+    <button onclick="mostrarPantallaCompleta('puntajeSprint')" class="button">
+        <span class="icon">⭐</span> Puntaje Carrera Sprint
+    </button>
+
+    <button onclick="mostrarPantallaCompleta('neumaticos')" class="button">
+        <span class="icon">🔧</span> Gomas/Neumáticos
+    </button>
+
+    <div class="powered-by">Powered by Leonardo Dottori</div>
+
+    <div id="fullscreenOverlay" class="fullscreen" style="display: none;">
+        <div id="fullscreenContent"></div>
+        <button class="back-button" onclick="ocultarPantallaCompleta()">Regresar</button>
+    </div>
+
+    <script>
+        function mostrarPantallaCompleta(tipo) {
+            const content = {
+                clasificacion: `
+                    <h2>Formato de Clasificación</h2>
+                    <p><strong>Q1:</strong> 18 minutos - avanzan los 15 mejores.</p>
+                    <p><strong>Q2:</strong> 15 minutos - avanzan los 10 mejores.</p>
+                    <p><strong>Q3:</strong> 12 minutos - determina el orden de salida para la carrera.</p>
+                `,
+                carreraNormal: `
+                    <h2>Formato de Carrera Normal</h2>
+                    <ul>
+                        <li>Práctica 1 - Viernes</li>
+                        <li>Práctica 2 - Viernes</li>
+                        <li>Práctica 3 - Sábado</li>
+                        <li>Clasificación - Sábado</li>
+                        <li>Carrera - Domingo</li>
+                    </ul>
+                `,
+                carreraSprint: `
+                    <h2>Formato de Carrera Sprint</h2>
+                    <ul>
+                        <li>Práctica 1 - Viernes</li>
+                        <li>Clasificación Sprint - Viernes</li>
+                        <li>Carrera Sprint - Sábado</li>
+                        <li>Clasificación - Sábado</li>
+                        <li>Carrera - Domingo</li>
+                    </ul>
+                `,
+                puntajeNormal: `
+                    <h2>Puntaje Carrera Normal</h2>
+                    <ul>
+                        <li>1º: 25 puntos</li>
+                        <li>2º: 18 puntos</li>
+                        <li>3º: 15 puntos</li>
+                        <li>4º: 12 puntos</li>
+                        <li>5º: 10 puntos</li>
+                        <li>6º: 8 puntos</li>
+                        <li>7º: 6 puntos</li>
+                        <li>8º: 4 puntos</li>
+                        <li>9º: 2 puntos</li>
+                        <li>10º: 1 punto</li>
+                    </ul>
+                `,
+                puntajeSprint: `
+                    <h2>Puntaje Carrera Sprint</h2>
+                    <ul>
+                        <li>1º: 8 puntos</li>
+                        <li>2º: 7 puntos</li>
+                        <li>3º: 6 puntos</li>
+                        <li>4º: 5 puntos</li>
+                        <li>5º: 4 puntos</li>
+                        <li>6º: 3 puntos</li>
+                        <li>7º: 2 puntos</li>
+                        <li>8º: 1 punto</li>
+                    </ul>
+                `,
+                neumaticos: `
+                    <h2>Gomas/Neumáticos</h2>
+                    <ul>
+                        <li><span class="wheel blando"></span><strong>Blandos:</strong> más rápidos.</li>
+                        <li><span class="wheel medio"></span><strong>Medios:</strong> rápidos.</li>
+                        <li><span class="wheel duro"></span><strong>Duros:</strong> más lentos.</li>
+                        <li><span class="wheel intermedio"></span><strong>Intermedios:</strong> para poca lluvia.</li>
+                        <li><span class="wheel wet"></span><strong>Full Wet:</strong> para mucha lluvia.</li>
+                    </ul>
+                `
+            };
+
+            document.getElementById("fullscreenContent").innerHTML = content[tipo];
+            document.getElementById("fullscreenOverlay").style.display = "flex";
+        }
+
+        function ocultarPantallaCompleta() {
+            document.getElementById("fullscreenOverlay").style.display = "none";
+        }
+    </script>
+</body>
+</html>
